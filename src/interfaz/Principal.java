@@ -5,6 +5,8 @@
  */
 package interfaz;
 
+import clases.Helper;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,6 +21,14 @@ public class Principal extends javax.swing.JFrame {
      */
     public Principal() {
         initComponents();
+        JButton botonesH[] = {cmdCrear, cmdLimpiar};
+        JButton botonesD[] = {cmdManual, cmdAutomatico, cmdOperaciones};
+
+        Helper.habilitarBotones(botonesH);
+        Helper.deshabilitarBotones(botonesD);
+
+        txtFilas.setEditable(true);
+        txtColumnas.setEditable(true);
     }
 
     /**
@@ -68,7 +78,19 @@ public class Principal extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Sylfaen", 1, 14)); // NOI18N
         jLabel3.setText("No. de Columnas:");
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, -1, -1));
+
+        txtFilas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtFilasKeyTyped(evt);
+            }
+        });
         jPanel2.add(txtFilas, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, 50, 30));
+
+        txtColumnas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtColumnasKeyTyped(evt);
+            }
+        });
         jPanel2.add(txtColumnas, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, 50, 30));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 240, 110));
@@ -129,7 +151,7 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tblTablaResultado);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 270, 360, 290));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 280, 370, 290));
 
         tblTablaInicial.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -141,9 +163,9 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(tblTablaInicial);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 280, 360, 290));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 370, 290));
 
-        cmbOperaciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diagonal Secundaria", "Triangular Superior", "Letra A", "Letra T", "Letra E", "Letra F", "Letra P", "Letra I", "Letra N", " " }));
+        cmbOperaciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Diagonal Secundaria", "Triangular Superior", "Triangular Inferior", "Matriz Traspuesta", "Letra A", "Letra Z", "Letra T", "Letra V", "Letra E", "Letra F", "Letra P", "Letra I", "Letra N", "Letra Y", "Letra X" }));
         jPanel1.add(cmbOperaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 400, 140, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,25 +183,77 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCrearActionPerformed
-        int filas, columnas;
-        DefaultTableModel t1, t2;
+        if (txtFilas.getText().isEmpty()) {
+            getToolkit().beep();
+            Helper.mensaje(this, "Digite Numero de Filas", 3);
+            txtFilas.requestFocusInWindow();
+        } else if (txtColumnas.getText().isEmpty()) {
+            getToolkit().beep();
+            Helper.mensaje(this, "Digite Numero de Columnas", 3);
+            txtColumnas.requestFocusInWindow();
+        } else {
+            int filas, columnas;
+            DefaultTableModel t1, t2;
 
-        filas = Integer.parseInt((txtFilas).getText());
-        columnas = Integer.parseInt((txtColumnas).getText());
+            filas = Integer.parseInt((txtFilas).getText());
+            columnas = Integer.parseInt((txtColumnas).getText());
 
-        t1 = (DefaultTableModel) tblTablaInicial.getModel();
-        t2 = (DefaultTableModel) tblTablaResultado.getModel();
+            if (filas == 0) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Filas No puede ser cero(0)", 3);
+                txtFilas.requestFocusInWindow();
+                txtFilas.selectAll();
+            } else if (columnas == 0) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Columnas No puede ser cero(0)", 3);
+                txtColumnas.requestFocusInWindow();
+                txtColumnas.selectAll();
+            } else if (filas == 1) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Filas No puede ser uno(1)", 3);
+                txtFilas.requestFocusInWindow();
+                txtFilas.selectAll();
+            } else if (columnas == 1) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Columnas No puede ser uno(1)", 3);
+                txtColumnas.requestFocusInWindow();
+                txtColumnas.selectAll();
+            } else if (filas > 15) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Filas No puede ser mayor a 15", 3);
+                txtFilas.requestFocusInWindow();
+                txtFilas.selectAll();
+            } else if (columnas > 15) {
+                getToolkit().beep();
+                Helper.mensaje(this, "El Numero de Columnas No puede ser mayor a 15", 3);
+                txtColumnas.requestFocusInWindow();
+                txtColumnas.selectAll();
+            } else {
+                t1 = (DefaultTableModel) tblTablaInicial.getModel();
+                t2 = (DefaultTableModel) tblTablaResultado.getModel();
 
-        t1.setRowCount(filas);
-        t1.setColumnCount(columnas);
+                t1.setRowCount(filas);
+                t1.setColumnCount(columnas);
 
-        t2.setRowCount(filas);
-        t2.setColumnCount(columnas);
+                t2.setRowCount(filas);
+                t2.setColumnCount(columnas);
+
+                JButton botonesH[] = {cmdManual, cmdAutomatico, cmdLimpiar};
+                JButton botonesD[] = {cmdCrear, cmdOperaciones};
+
+                Helper.habilitarBotones(botonesH);
+                Helper.deshabilitarBotones(botonesD);
+                txtFilas.setEditable(false);
+                txtColumnas.setEditable(false);
+
+            }
+        }
     }//GEN-LAST:event_cmdCrearActionPerformed
 
     private void cmdManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdManualActionPerformed
-        int filas, columnas, n, sw, res;
-        boolean aux = true;
+        int filas, columnas, n;
+
+        int sw, res;
 
         columnas = tblTablaInicial.getColumnCount();
         filas = tblTablaResultado.getRowCount();
@@ -189,22 +263,22 @@ public class Principal extends javax.swing.JFrame {
                 do {
                     sw = 1;
                     try {
-
-                        n = Integer.parseInt(JOptionPane.showInputDialog(this, "Digite el elemento en la Fila " + i + " y el la Columna " + j));
+                        n = Integer.parseInt(JOptionPane.showInputDialog(this, "Digite el elemento el la posicion [" + i + "]" + "[" + j + "]").trim());
                         tblTablaInicial.setValueAt(n, i, j);
 
                     } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "Digite un Numero Valido", "Error", JOptionPane.ERROR_MESSAGE);
+                        getToolkit().beep();
+                        Helper.mensaje(this, "Digite un Numero Valido", 3);
                         sw = 0;
                     } catch (NullPointerException e) {
-                        res = JOptionPane.showConfirmDialog(this, "Seguro que decias salir", "Salir", JOptionPane.YES_OPTION);
+                        res = JOptionPane.showConfirmDialog(this, "Seguro que deseas salir", "Salir", JOptionPane.YES_OPTION);
                         if (res == 0) {
                             sw = 1;
-
                             i = filas;
                             j = columnas;
 
-                            aux = false;
+                            Helper.porDefectoTabla(tblTablaInicial);
+                            Helper.porDefectoTabla(tblTablaResultado);
                         } else {
                             sw = 0;
                         }
@@ -213,8 +287,16 @@ public class Principal extends javax.swing.JFrame {
                 } while (sw == 0);
 
             }
+
         }
 
+        JButton botonesH[] = {cmdOperaciones, cmdLimpiar};
+        JButton botonesD[] = {cmdCrear, cmdManual, cmdAutomatico};
+
+        Helper.habilitarBotones(botonesH);
+        Helper.deshabilitarBotones(botonesD);
+        txtFilas.setEditable(false);
+        txtColumnas.setEditable(false);
 
     }//GEN-LAST:event_cmdManualActionPerformed
 
@@ -231,170 +313,276 @@ public class Principal extends javax.swing.JFrame {
             }
 
         }
+        JButton botonesH[] = {cmdOperaciones, cmdLimpiar};
+        JButton botonesD[] = {cmdCrear, cmdManual, cmdAutomatico};
 
+        Helper.habilitarBotones(botonesH);
+        Helper.deshabilitarBotones(botonesD);
+        txtFilas.setEditable(false);
+        txtColumnas.setEditable(false);
     }//GEN-LAST:event_cmdAutomaticoActionPerformed
 
     private void cmdLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLimpiarActionPerformed
-        int columnas, filas;
-        DefaultTableModel t1, t2;
-
-        columnas = tblTablaInicial.getColumnCount();
-        filas = tblTablaResultado.getRowCount();
-
         txtFilas.setText("");
         txtColumnas.setText("");
         txtFilas.requestFocusInWindow();
         cmbOperaciones.setSelectedIndex(0);
 
-        t1 = (DefaultTableModel) tblTablaInicial.getModel();
-        t2 = (DefaultTableModel) tblTablaResultado.getModel();
+        Helper.porDefectoTabla(tblTablaInicial);
+        Helper.porDefectoTabla(tblTablaResultado);
 
-        t1.setRowCount(0);
-        t1.setColumnCount(0);
+        JButton botonesH[] = {cmdCrear, cmdLimpiar};
+        JButton botonesD[] = {cmdManual, cmdAutomatico, cmdOperaciones};
 
-        t2.setRowCount(0);
-        t2.setColumnCount(0);
+        Helper.habilitarBotones(botonesH);
+        Helper.deshabilitarBotones(botonesD);
+
+        txtFilas.setEditable(true);
+        txtColumnas.setEditable(true);
     }//GEN-LAST:event_cmdLimpiarActionPerformed
 
     private void cmdOperacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdOperacionesActionPerformed
-    int op, filas, columnas, aux, cont = 0;
-    op = cmbOperaciones.getSelectedIndex();
+        int op, nf, nc;
+        op = cmbOperaciones.getSelectedIndex();
+        Helper.limpiadoTabla(tblTablaResultado);
+        nf = Integer.parseInt((txtFilas).getText());
+        nc = Integer.parseInt((txtColumnas).getText());
+        switch (op) {
 
-    filas = tblTablaInicial.getRowCount();
-    columnas = tblTablaInicial.getColumnCount();
-
-    switch (op) {
-
-        case 0:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-
-                    if (i == j) {
-                    tblTablaResultado.setValueAt(aux, i, j);
-
-                    }
+            case 0:
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.diagonalSecundaria(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-        
+                break;
 
-        case 1:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (i == j || i==0 || j==filas-1) {
-                    tblTablaResultado.setValueAt(aux, i, j);
-
-                    }     
+            case 1: //Triangular Superior
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.triangularSuperior(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-  
-        case 2:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (i == 0 ||i==filas/2 || j==0 || j== columnas-1) {
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
+            case 2: //Triangular Inferior
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.triangularInferior(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-        
-        
-        
-        
-        
-        case 3:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (i==0 || j==filas/2) {
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
+            case 3: //Matriz Transpuesta
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.matrizTranspuesta(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;   
-        
-        case 4:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (j==0 || i==0 || i==filas-1 || i==columnas/2){
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
-                }
-            }
-        break; 
-        
-        case 5:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (j==0 || i==0  || i==columnas/2){
-                    tblTablaResultado.setValueAt(aux, i, j);
+            case 4: //Letra A
+                Helper.letraA(tblTablaInicial, tblTablaResultado);
+                break;
 
-                    }     
+            case 5: //Letra Z
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraZ(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break; 
-        
-        case 6://Falta
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (j==0 || i==0  || i==columnas/2 || j==filas-1){
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
+            case 6: //Letra T
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc % 2 == 0) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser impar", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraT(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-        
-        case 7:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (j==columnas/2 || i==filas-1 || i==0){
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
+            case 7: //Letra V
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc % 2 == 0) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser impar", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraV(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-        
-        case 8:
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {
-                    aux = (int) tblTablaInicial.getValueAt(i, j);
-                   
-                    if (i==j || j==filas-1 || j==0){
-                    tblTablaResultado.setValueAt(aux, i, j);
+                break;
 
-                    }     
+            case 8: //Letra E
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nf <= 4) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser mayor que 4", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc <= 4) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser mayor que 4", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraE(tblTablaInicial, tblTablaResultado);
                 }
-            }
-        break;
-        
-        
-        
-        
-        
-        
-  }
-  
+                break;
+
+            case 9: //Letra F
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nf <= 3) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser mayor que 3", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc <= 3) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser mayor que 3", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraF(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+
+            case 10://Letra P
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nf <= 3) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser mayor que 3", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc <= 3) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser mayor que 3", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                Helper.letraP(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+
+            case 11: //Letra I
+                if (nc % 2 == 0) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser impar", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraI(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+
+            case 12: //Letra N
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraN(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+
+            case 13: //Letra Y
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc % 2 == 0) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser impar", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraY(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+
+            case 14: //Letra X
+                if (nf != nc) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de filas debe ser igual a No. de columnas", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else if (nc % 2 == 0) {
+                    getToolkit().beep();
+                    Helper.mensaje(this, "Para realizar esta operacion el No. de columnas debe ser impar", 3);
+                    Helper.porDefectoTabla(tblTablaInicial);
+                    Helper.porDefectoTabla(tblTablaResultado);
+                } else {
+                    Helper.letraX(tblTablaInicial, tblTablaResultado);
+                }
+                break;
+        }
+
+        JButton botonesH[] = {cmdOperaciones, cmdLimpiar};
+        JButton botonesD[] = {cmdManual, cmdAutomatico, cmdCrear};
+
+        Helper.habilitarBotones(botonesH);
+        Helper.deshabilitarBotones(botonesD);
+        txtFilas.setEditable(false);
+        txtColumnas.setEditable(false);
+
     }//GEN-LAST:event_cmdOperacionesActionPerformed
+
+    private void txtFilasKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtFilasKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtFilasKeyTyped
+
+    private void txtColumnasKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtColumnasKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c)) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtColumnasKeyTyped
 
     /**
      * @param args the command line arguments
